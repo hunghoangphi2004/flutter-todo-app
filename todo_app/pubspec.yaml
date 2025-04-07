@@ -16,6 +16,7 @@ dependencies:
   date_picker_timeline: ^1.2.5
   flutter_local_notifications: ^17.0.0
   sqflite: ^2.0.0+4
+  flutter_svg: ^1.1.6
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -25,3 +26,4 @@ flutter:
   uses-material-design: true
   assets:
     - images/profile.png
+    - assets/
