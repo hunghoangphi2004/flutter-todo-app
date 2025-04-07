@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context, notifyHelper), // Truyền notifyHelper vào AppBar
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(children: [_addTaskBar(), _addDateBar()]),
     );
   }
