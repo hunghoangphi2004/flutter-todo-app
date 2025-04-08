@@ -21,6 +21,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
   String _startTime = DateFormat("hh:mm a").format(DateTime.now()).toString();
   int _selectedRemind = 5;
   String _selectedRepeat = "None";
+  String _selectedCategory = "None";
+  List<String> categorytList = ["None", "Hưng", "Hân", "Nhi", "Nga"];
   List<int> remindList = [5, 10, 15, 20];
   List<String> repeatList = ["None", "Daily", "Weekly", "Monthly"];
   int _selectedColor = 0;
@@ -129,6 +131,34 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   },
                   items:
                       repeatList.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        );
+                      }).toList(),
+                ),
+              ),
+              MyInputField(
+                title: "Category",
+                hint: _selectedCategory,
+                widget: DropdownButton(
+                  icon: Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+                  iconSize: 32,
+                  elevation: 4,
+                  style: subTitleStyle,
+                  underline: Container(height: 0),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedCategory = newValue!;
+                    });
+                  },
+                  items:
+                      categorytList.map<DropdownMenuItem<String>>((
+                        String value,
+                      ) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(

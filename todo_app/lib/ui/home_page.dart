@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:todo_app/services/notification_services.dart';
 import 'package:todo_app/services/theme_services.dart';
 import 'package:todo_app/ui/add_task_bar.dart';
+import 'package:todo_app/ui/add_task_category.dart';
 import 'package:todo_app/ui/theme.dart';
 import 'package:todo_app/ui/widgets/button.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
@@ -94,7 +95,17 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-          MyButton(label: "+ Add Task", onTap: () => Get.to(AddTaskPage())),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              MyButton(label: "+ Add Task", onTap: () => Get.to(AddTaskPage())),
+              SizedBox(height: 10),
+              MyButton(
+                label: "+ Add Category",
+                onTap: () => Get.to(AddTaskCategory()),
+              ),
+            ],
+          ),
         ],
       ),
     );
