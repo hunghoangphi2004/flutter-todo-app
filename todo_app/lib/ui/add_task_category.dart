@@ -25,7 +25,7 @@ class _AddTaskPageState extends State<AddTaskCategory> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Add Task", style: headingStyle),
+              Text("Add Category Task", style: headingStyle),
               MyInputField(
                 title: "Category Name",
                 hint: "Enter category name here.",
