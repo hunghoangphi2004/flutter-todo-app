@@ -27,12 +27,12 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug") // Chỉnh sửa cấu hình ký kết khi build release
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString() // Nên giữ Java 8 cho Android
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 }
 

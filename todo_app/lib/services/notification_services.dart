@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:todo_app/models/task.dart';
 
 class NotifyHelper {
   // Singleton Pattern để đảm bảo chỉ có một instance của NotifyHelper
@@ -14,6 +18,7 @@ class NotifyHelper {
 
   // Phương thức khởi tạo thông báo
   Future<void> initializeNotification() async {
+    // _configureLocalTimezone();
     final DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
           requestAlertPermission: false,
@@ -76,6 +81,51 @@ class NotifyHelper {
       payload: 'Default_Sound',
     );
   }
+
+  // scheduledNotification(int hour, int minutes, Task task) async {
+  //   await flutterLocalNotificationsPlugin.zonedSchedule(
+  //     0,
+  //     'scheduled title',
+  //     'theme changes 5 seconds ago',
+  //     _convertTime(hour, minutes),
+  //     // tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+  //     const NotificationDetails(
+  //       android: AndroidNotificationDetails(
+  //         'your_channel_id',
+  //         'your_channel_name',
+  //         channelDescription: 'your_channel_description',
+  //         importance: Importance.max,
+  //         priority: Priority.high,
+  //       ),
+  //     ),
+  //     androidAllowWhileIdle: true,
+  //     uiLocalNotificationDateInterpretation:
+  //         UILocalNotificationDateInterpretation.absoluteTime,
+  //     matchDateTimeComponents: DateTimeComponents.time,
+  //   );
+  // }
+
+  // tz.TZDateTime _convertTime(int hour, int minutes) {
+  //   final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+  //   tz.TZDateTime scheduleDate = tz.TZDateTime(
+  //     tz.local,
+  //     now.year,
+  //     now.month,
+  //     now.day,
+  //     hour,
+  //     minutes,
+  //   );
+  //   if (scheduleDate.isBefore(now)) {
+  //     scheduleDate = scheduleDate.add(const Duration(days: 1));
+  //   }
+  //   return scheduleDate;
+  // }
+
+  // Future<void> _configureLocalTimezone() async {
+  //   tz.initializeTimeZones();
+  //   final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
+  //   tz.setLocalLocation(tz.getLocation(timeZone));
+  // }
 }
 
 // Xử lý khi nhận phản hồi từ thông báo

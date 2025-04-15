@@ -15,6 +15,7 @@ dependencies:
   google_fonts: 
   date_picker_timeline: ^1.2.5
   flutter_local_notifications: ^17.0.0
+  timezone: ^0.9.0
   sqflite: ^2.0.0+4
   flutter_svg: ^1.1.6
   flutter_staggered_animations: ^1.1.1
