@@ -13,7 +13,7 @@ class Task {
 
   Task({
     this.id,
-    this.title,
+    required this.title,
     this.note,
     this.isCompleted,
     this.date,
