@@ -28,4 +28,25 @@ class TaskController extends GetxController {
     await DBHelper.update(id);
     getTasks(); // Refresh the task list after marking as completed
   }
+
+  // void getTasksByCategory(String category) async {
+  //   List<Map<String, dynamic>> tasks = await DBHelper.queryTasksByCategory(
+  //     category,
+  //   );
+  //   taskList.assignAll(tasks.map((data) => Task.fromJson(data)).toList());
+  // }
+
+  void getTasksByCategory(String category) async {
+    List<Map<String, dynamic>> tasks;
+
+    if (category == "All") {
+      // Nếu chọn "All", lấy tất cả nhiệm vụ
+      tasks = await DBHelper.query();
+    } else {
+      // Lọc nhiệm vụ theo danh mục
+      tasks = await DBHelper.queryTasksByCategory(category);
+    }
+
+    taskList.assignAll(tasks.map((data) => Task.fromJson(data)).toList());
+  }
 }

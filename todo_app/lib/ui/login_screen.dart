@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:todo_app/ui/user_type_selection_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -76,19 +78,25 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget colorButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width - 60,
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [Color(0xfffd746c), Color(0xffff9068), Color(0xfffd746c)],
+    return GestureDetector(
+      onTap: () {
+        // Điều hướng đến HomeScreen bằng Get.to()
+        Get.to(() => UserTypeSelectionScreen()); // Chuyển hướng đến HomeScreen
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width - 60,
+        height: 60,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: [Color(0xfffd746c), Color(0xffff9068), Color(0xfffd746c)],
+          ),
         ),
-      ),
-      child: Center(
-        child: Text(
-          "Sign in",
-          style: TextStyle(color: Colors.white, fontSize: 20),
+        child: Center(
+          child: Text(
+            "Sign in",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
         ),
       ),
     );
@@ -125,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
       width: MediaQuery.of(context).size.width - 70,
       height: 55,
       child: TextFormField(
+        style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: TextStyle(fontSize: 17, color: Colors.white),

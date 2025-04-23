@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
+import 'package:todo_app/controller/task_category_controller.dart';
 import 'package:todo_app/ui/theme.dart';
 import 'package:todo_app/ui/widgets/button.dart';
 import 'package:todo_app/ui/widgets/input_field.dart';
+import 'package:todo_app/models/task_category.dart';
 
 class AddTaskCategory extends StatefulWidget {
   const AddTaskCategory({Key? key}) : super(key: key);
@@ -13,9 +15,14 @@ class AddTaskCategory extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskCategory> {
-  @override
-  int _selectedColor = 0;
+  final TaskCategoryController _categoryController = Get.put(
+    TaskCategoryController(),
+  );
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
+  Color _selectedColor = Colors.blue; // Màu mặc định
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context),
@@ -29,18 +36,42 @@ class _AddTaskPageState extends State<AddTaskCategory> {
               MyInputField(
                 title: "Category Name",
                 hint: "Enter category name here.",
+                controller: _titleController,
               ),
               MyInputField(
                 title: "Description",
                 hint: "Enter description here.",
+                controller: _descController,
               ),
               SizedBox(height: 18),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _colorPalete(),
-                  MyButton(label: "Create category", onTap: () => null),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Color", style: titleStyle),
+                      SizedBox(height: 8),
+                      _colorPicker(),
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 20),
+                      MyButton(
+                        label: "Create category",
+                        onTap: () {
+                          _validateCategoryData();
+                          print(
+                            'Category created with color: ${_selectedColor.toString()}',
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ],
@@ -50,40 +81,59 @@ class _AddTaskPageState extends State<AddTaskCategory> {
     );
   }
 
-  _colorPalete() {
+  _colorPicker() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Color", style: titleStyle),
         SizedBox(height: 8),
-        Wrap(
-          children: List<Widget>.generate(3, (int index) {
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedColor = index;
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: CircleAvatar(
-                  radius: 14,
-                  backgroundColor:
-                      index == 0
-                          ? primaryClr
-                          : index == 1
-                          ? pinkClr
-                          : yellowClr,
-                  child:
-                      _selectedColor == index
-                          ? Icon(Icons.done, color: Colors.white, size: 16)
-                          : Container(),
-                ),
-              ),
-            );
-          }),
+        GestureDetector(
+          onTap: () {
+            // Mở hộp chọn màu
+            _pickColor();
+          },
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: _selectedColor,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.black, width: 2),
+            ),
+            child: Center(child: Icon(Icons.edit, color: Colors.white)),
+          ),
         ),
       ],
+    );
+  }
+
+  void _pickColor() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Choose a Color"),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: _selectedColor,
+              onColorChanged: (Color color) {
+                setState(() {
+                  _selectedColor = color; // Cập nhật màu khi chọn
+                });
+              },
+              showLabel: true, // Hiển thị tên màu
+              pickerAreaHeightPercent: 0.8, // Chiều cao của vùng chọn màu
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Đóng hộp thoại sau khi chọn
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -104,5 +154,33 @@ class _AddTaskPageState extends State<AddTaskCategory> {
         SizedBox(width: 20),
       ],
     );
+  }
+
+  _validateCategoryData() {
+    if (_titleController.text.isNotEmpty && _descController.text.isNotEmpty) {
+      _addCategoryToDb();
+      Get.back();
+    } else {
+      Get.snackbar(
+        "Required",
+        "All fields are required",
+        snackPosition: SnackPosition.BOTTOM,
+        icon: Icon(Icons.warning_amber_rounded, color: Colors.red),
+        backgroundColor: Colors.white,
+        colorText: pinkClr,
+      );
+    }
+  }
+
+  _addCategoryToDb() async {
+    int value = await _categoryController.addCategory(
+      TaskCategory(
+        title: _titleController.text,
+        description: _descController.text,
+        color: _selectedColor.toARGB32(), // Chuyển màu về int
+      ),
+    );
+    print("New category ID: $value");
+    _categoryController.getCategories();
   }
 }

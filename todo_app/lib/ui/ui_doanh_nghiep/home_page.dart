@@ -5,80 +5,50 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_app/controller/task_controller.dart';
 import 'package:todo_app/models/task.dart';
-import 'package:todo_app/models/task_category.dart';
 import 'package:todo_app/services/notification_services.dart';
 import 'package:todo_app/services/theme_services.dart';
 import 'package:todo_app/ui/add_task_bar.dart';
-import 'package:todo_app/ui/add_task_category.dart';
 import 'package:todo_app/ui/theme.dart';
+import 'package:todo_app/ui/ui_doanh_nghiep/team_members_screen.dart';
 import 'package:todo_app/ui/widgets/button.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:todo_app/ui/widgets/task_tile.dart';
-import 'package:todo_app/ui/widgets/category_filter.dart';
-import 'package:todo_app/controller/task_category_controller.dart';
 
-class MyHomePage extends StatefulWidget {
+class MyHomePageBusiness extends StatefulWidget {
   final String title;
-  const MyHomePage({required this.title, super.key});
+
+  const MyHomePageBusiness({required this.title, Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHomePageBusiness> createState() => _MyHomePageBusinessState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageBusinessState extends State<MyHomePageBusiness> {
   DateTime _selectedDate = DateTime.now();
   final _taskController = Get.put(TaskController());
-  late NotifyHelper notifyHelper; // Đảm bảo biến không null
-  // String _selectedTaskCategory = "All";
-  TaskCategory? _selectedTaskCategory;
+  late NotifyHelper notifyHelper;
 
   @override
   void initState() {
     super.initState();
-    notifyHelper = NotifyHelper(); // Khởi tạo NotifyHelper
-    notifyHelper.initializeNotification(); // Khởi tạo thông báo
-    notifyHelper.requestIOSPermissions(); // Yêu cầu quyền trên iOS
+    notifyHelper = NotifyHelper();
+    notifyHelper.initializeNotification();
+    notifyHelper.requestIOSPermissions();
     _taskController.getTasks();
-    final _categoryController = Get.put(TaskCategoryController());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(context, notifyHelper), // Truyền notifyHelper vào AppBar
+      appBar: _appBar(context, notifyHelper),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           _addTaskBar(),
           _addDateBar(),
           SizedBox(height: 10),
-          _filterTasksByCategory(),
-          SizedBox(height: 10),
-          _showTasks(),
+          // _showTasks(),
         ],
-      ),
-    );
-  }
-
-  _filterTasksByCategory() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: CategoryDropdown(
-        selectedCategory: _selectedTaskCategory,
-        onChanged: (selectedCategory) {
-          setState(() {
-            _selectedTaskCategory = selectedCategory;
-          });
-
-          // Gọi lại phương thức filterTasksByCategory khi thay đổi category
-          if (selectedCategory == null || selectedCategory.id == -1) {
-            _taskController.getTasks(); // Lấy tất cả các task khi chọn "All"
-          } else {
-            _taskController.getTasksByCategory(
-              selectedCategory.title!,
-            ); // Lọc theo danh mục
-          }
-        },
       ),
     );
   }
@@ -123,46 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // _addTaskBar() {
-  //   return Container(
-  //     margin: EdgeInsets.only(left: 20, right: 20, top: 10),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         Container(
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Text(
-  //                 DateFormat.yMMMMd().format(DateTime.now()),
-  //                 style: subHeadingStyle,
-  //               ),
-  //               Text("Today", style: headingStyle),
-  //             ],
-  //           ),
-  //         ),
-  //         Column(
-  //           crossAxisAlignment: CrossAxisAlignment.end,
-  //           children: [
-  //             MyButton(
-  //               label: "+ Add Task",
-  //               onTap: () async {
-  //                 await Get.to(() => AddTaskPage());
-  //                 _taskController.getTasks();
-  //               },
-  //             ),
-  //             SizedBox(height: 10),
-  //             MyButton1(
-  //               label: "+ Add Category",
-  //               onTap: () => Get.to(AddTaskCategory()),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   _addTaskBar() {
     return Container(
       margin: EdgeInsets.only(left: 20, right: 20, top: 10),
@@ -177,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   DateFormat.yMMMMd().format(DateTime.now()),
                   style: subHeadingStyle,
                 ),
-                Text("Today", style: headingStyle),
+                Text("Business Tasks", style: headingStyle),
               ],
             ),
           ),
@@ -193,16 +123,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               SizedBox(height: 10),
               MyButton1(
-                label: "+ Add Category",
-                onTap: () => Get.to(AddTaskCategory()),
+                label: "+ Add Members",
+                onTap: () => Get.to(() => TeamMembersScreen()),
               ),
-              SizedBox(height: 10),
-              // MyButton1(
-              //   label: "View Categories",
-              //   onTap:
-              //       () =>
-              //           Get.to(() => TaskCategoryList()),
-              // ),
             ],
           ),
         ],
@@ -213,21 +136,11 @@ class _MyHomePageState extends State<MyHomePage> {
   // _showTasks() {
   //   return Expanded(
   //     child: Obx(() {
-  //       print("taskList length: ${_taskController.taskList.length}");
   //       return ListView.builder(
   //         itemCount: _taskController.taskList.length,
-
   //         itemBuilder: (_, index) {
   //           Task task = _taskController.taskList[index];
   //           if (task.repeat == "Daily") {
-  //             // DateTime date = DateFormat.jm().parse(task.startTime.toString());
-  //             // var myTime = DateFormat("HH:mm").format(date);
-  //             // print(myTime);
-  //             // notifyHelper.scheduledNotification(
-  //             //   int.parse(myTime.toString().split(":")[0]),
-  //             //   int.parse(myTime.toString().split(":")[1]),
-  //             //   task,
-  //             // );
   //             return AnimationConfiguration.staggeredList(
   //               position: index,
   //               child: SlideAnimation(
@@ -272,73 +185,11 @@ class _MyHomePageState extends State<MyHomePage> {
   //     }),
   //   );
   // }
-  _showTasks() {
-    return Expanded(
-      child: Obx(() {
-        print("taskList length: ${_taskController.taskList.length}");
-
-        // Lọc các task theo category được chọn
-        List<Task> filteredTasks =
-            _taskController.taskList.where((task) {
-              // Nếu không chọn "All", mới lọc theo category
-              if (_selectedTaskCategory != null &&
-                  _selectedTaskCategory!.id != -1 &&
-                  task.category != _selectedTaskCategory!.title) {
-                return false;
-              }
-
-              // Lọc theo ngày hoặc Daily
-              if (task.repeat == "Daily" ||
-                  task.date == DateFormat.yMd().format(_selectedDate)) {
-                return true;
-              }
-
-              return false;
-            }).toList();
-
-        // Nếu không có task nào trong danh mục được chọn
-        if (filteredTasks.isEmpty) {
-          return Center(
-            child: Text(
-              "No tasks available in this category", // Thông báo khi không có task
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-          );
-        }
-
-        // Nếu có task, hiển thị danh sách
-        return ListView.builder(
-          itemCount: filteredTasks.length,
-          itemBuilder: (_, index) {
-            Task task = filteredTasks[index];
-
-            return AnimationConfiguration.staggeredList(
-              position: index,
-              child: SlideAnimation(
-                child: FadeInAnimation(
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          _showBottomSheet(context, task);
-                        },
-                        child: TaskTile(task),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      }),
-    );
-  }
 
   _bottomSheetButton({
-    required label,
-    required onTap,
-    required clr,
+    required String label,
+    required Function() onTap,
+    required Color clr,
     bool isClose = false,
     required BuildContext context,
   }) {
@@ -348,7 +199,6 @@ class _MyHomePageState extends State<MyHomePage> {
         margin: const EdgeInsets.symmetric(vertical: 4),
         height: 55,
         width: MediaQuery.of(context).size.width * 0.9,
-
         decoration: BoxDecoration(
           border: Border.all(
             width: 2,
@@ -362,7 +212,6 @@ class _MyHomePageState extends State<MyHomePage> {
           borderRadius: BorderRadius.circular(20),
           color: isClose == true ? Colors.transparent : clr,
         ),
-
         child: Center(
           child: Text(
             label,
@@ -405,15 +254,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   clr: primaryClr,
                   context: context,
                 ),
+            task.isCompleted != 1
+                ? _bottomSheetButton(
+                  label: "Assign Task",
+                  onTap: () {
+                    Get.back();
+                    Get.to(() => TeamMembersScreen(taskToAssign: task));
+                  },
+                  clr: Colors.orange,
+                  context: context,
+                )
+                : Container(),
             _bottomSheetButton(
               label: "Delete Task",
               onTap: () {
                 _taskController.delete(task);
-
                 Get.back();
               },
-              clr: Colors.red[300],
-
+              clr: Colors.red[300]!,
               context: context,
             ),
             SizedBox(height: 20),
@@ -422,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 Get.back();
               },
-              clr: Colors.red[300],
+              clr: Colors.red[300]!,
               isClose: true,
               context: context,
             ),
@@ -446,8 +304,6 @@ AppBar _appBar(BuildContext context, NotifyHelper notifyHelper) {
           body:
               Get.isDarkMode ? "Dark Theme Activated" : "Light Theme Activated",
         );
-
-        // notifyHelper.scheduledNotification();
       },
       child: Icon(
         Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_round,
@@ -456,6 +312,16 @@ AppBar _appBar(BuildContext context, NotifyHelper notifyHelper) {
       ),
     ),
     actions: [
+      IconButton(
+        icon: Icon(
+          Icons.people,
+          color: Get.isDarkMode ? Colors.white : Colors.black,
+          size: 24,
+        ),
+        onPressed: () {
+          Get.to(() => TeamMembersScreen());
+        },
+      ),
       CircleAvatar(backgroundImage: AssetImage("images/profile.png")),
       SizedBox(width: 20),
     ],

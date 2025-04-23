@@ -5,6 +5,8 @@ import 'package:todo_app/db/db_helper.dart';
 import 'package:todo_app/services/theme_services.dart';
 import 'package:todo_app/ui/home_page.dart';
 import 'package:todo_app/ui/theme.dart';
+import 'package:todo_app/ui/user_type_selection_screen.dart';
+import 'package:todo_app/ui/login_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +26,9 @@ class MainApp extends StatelessWidget {
       theme: Themes.light,
       darkTheme: Themes.dark,
       themeMode: ThemeService().theme,
-      home: const MyHomePage(title: 'My first todo app'),
+      // home: const MyHomePage(title: 'My first todo app'),
+      // home: const UserTypeSelectionScreen(),
+      home: const LoginScreen(),
     );
   }
 }
