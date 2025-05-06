@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:todo_app/ui/theme.dart';
 import 'package:todo_app/ui/widgets/button.dart';
 import 'package:todo_app/ui/widgets/input_field.dart';
+import 'package:todo_app/controller/category_controller.dart'; // Import CategoryController
 
 class AddTaskCategory extends StatefulWidget {
   const AddTaskCategory({Key? key}) : super(key: key);
@@ -13,9 +13,12 @@ class AddTaskCategory extends StatefulWidget {
 }
 
 class _AddTaskPageState extends State<AddTaskCategory> {
-  @override
+  final CategoryController _categoryController = Get.find(); // Get CategoryController
+  final TextEditingController _categoryNameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   int _selectedColor = 0;
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(context),
@@ -27,10 +30,12 @@ class _AddTaskPageState extends State<AddTaskCategory> {
             children: [
               Text("Add Category Task", style: headingStyle),
               MyInputField(
+                controller: _categoryNameController,
                 title: "Category Name",
                 hint: "Enter category name here.",
               ),
               MyInputField(
+                controller: _descriptionController,
                 title: "Description",
                 hint: "Enter description here.",
               ),
@@ -40,7 +45,23 @@ class _AddTaskPageState extends State<AddTaskCategory> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _colorPalete(),
-                  MyButton(label: "Create category", onTap: () => null),
+                  MyButton(
+                    label: "Create Category",
+                    onTap: () async {
+                      if (_categoryNameController.text.isNotEmpty) {
+                        await _categoryController.addCategory(
+                          name: _categoryNameController.text,
+                          description: _descriptionController.text,
+                          color: _selectedColor.toString(),
+                        );
+                        // Reset input fields after adding category
+                        _categoryNameController.clear();
+                        _descriptionController.clear();
+
+                        Navigator.pop(context);  // <<== Thêm dòng này để quay về HomePage
+                      }
+                    }
+                  ),
                 ],
               ),
             ],
@@ -68,16 +89,14 @@ class _AddTaskPageState extends State<AddTaskCategory> {
                 padding: const EdgeInsets.only(right: 8.0),
                 child: CircleAvatar(
                   radius: 14,
-                  backgroundColor:
-                      index == 0
-                          ? primaryClr
-                          : index == 1
+                  backgroundColor: index == 0
+                      ? primaryClr
+                      : index == 1
                           ? pinkClr
                           : yellowClr,
-                  child:
-                      _selectedColor == index
-                          ? Icon(Icons.done, color: Colors.white, size: 16)
-                          : Container(),
+                  child: _selectedColor == index
+                      ? Icon(Icons.done, color: Colors.white, size: 16)
+                      : Container(),
                 ),
               ),
             );
